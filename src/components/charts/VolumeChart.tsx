@@ -1,3 +1,4 @@
+import { useLanguage } from "../../lib/locale";
 import {
   CartesianGrid,
   BarChart,
@@ -7,34 +8,37 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-const compact = new Intl.NumberFormat("en-US", {
-  notation: "compact",
-  maximumFractionDigits: 1,
-});
-const money = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-  maximumFractionDigits: 0,
-});
 export function VolumeChart({ data }: { data: [number, number][] }) {
+  const { t, locale } = useLanguage();
+  const compact = new Intl.NumberFormat(locale, {
+    notation: "compact",
+    maximumFractionDigits: 1,
+  });
+  const money = new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  });
+
   const points = data.map(([timestamp, volume]) => ({ timestamp, volume }));
   return (
     <section className="chart-panel" aria-labelledby="volume-title">
       <div className="chart-heading">
         <div>
-          <p className="eyebrow">ACTIVIDAD / USD</p>
-          <h2 id="volume-title">Trading Volume</h2>
+          <p className="eyebrow">{t("ACTIVIDAD / USD")}</p>
+          <h2 id="volume-title">{t("Trading Volume")}</h2>
         </div>
         <span className="chart-dot volume-dot" />
       </div>
       <p className="sr-only">
-        This chart displays the trading volume of the selected cryptocurrency
-        over the selected time period.
+        {t(
+          "This chart displays the trading volume of the selected cryptocurrency over the selected time period.",
+        )}{" "}
       </p>
       <div
         className="chart-area"
         role="img"
-        aria-label="Bar chart showing trading volume over time"
+        aria-label={t("Bar chart showing trading volume over time")}
       >
         <ResponsiveContainer width="100%" height="100%" minWidth={0}>
           <BarChart
@@ -50,7 +54,7 @@ export function VolumeChart({ data }: { data: [number, number][] }) {
             <XAxis
               dataKey="timestamp"
               tickFormatter={(v) =>
-                new Date(v).toLocaleDateString("es-MX", {
+                new Date(v).toLocaleDateString(locale, {
                   day: "numeric",
                   month: "short",
                 })
@@ -68,10 +72,8 @@ export function VolumeChart({ data }: { data: [number, number][] }) {
               axisLine={false}
             />
             <Tooltip
-              labelFormatter={(v) =>
-                new Date(Number(v)).toLocaleString("es-MX")
-              }
-              formatter={(v) => [money.format(Number(v)), "Volumen"]}
+              labelFormatter={(v) => new Date(Number(v)).toLocaleString(locale)}
+              formatter={(v) => [money.format(Number(v)), t("Volumen")]}
               contentStyle={{
                 borderRadius: 10,
                 border: "1px solid #dce3ef",

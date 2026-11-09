@@ -1,3 +1,4 @@
+import { useLanguage } from "./lib/locale";
 import { useState } from "react";
 import { useCryptoMarket } from "./hooks/useCryptoMarket";
 import { PriceChart } from "./components/charts/PriceChart";
@@ -7,18 +8,20 @@ const coins = [
   { id: "ethereum", name: "Ethereum", symbol: "ETH" },
   { id: "solana", name: "Solana", symbol: "SOL" },
 ];
-const money = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-  maximumFractionDigits: 2,
-});
-const shortMoney = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-  notation: "compact",
-  maximumFractionDigits: 2,
-});
 export default function App() {
+  const { t, lang, locale, setLanguage } = useLanguage();
+  const money = new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 2,
+  });
+  const shortMoney = new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency: "USD",
+    notation: "compact",
+    maximumFractionDigits: 2,
+  });
+
   const [crypto, setCrypto] = useState("bitcoin");
   const [days, setDays] = useState(7);
   const { data, loading, error, updatedAt, retry } = useCryptoMarket(
@@ -37,36 +40,45 @@ export default function App() {
         <a href="#main" className="brand">
           <span>cm</span>Crypto Market
         </a>
-        <span className="source-tag">DATOS DE COINGECKO</span>
+        <span className="source-tag">{t("DATOS DE COINGECKO")}</span>
+        <button
+          className="language-toggle"
+          type="button"
+          onClick={() => setLanguage(lang === "es" ? "en" : "es")}
+          aria-label={lang === "es" ? "Switch to English" : "Cambiar a español"}
+        >
+          {lang === "es" ? "EN" : "ES"}
+        </button>
         <a
           href="https://github.com/arpwn/crypto-market-dashboard"
           target="_blank"
           rel="noreferrer"
         >
-          Código ↗
+          {t("Código ↗")}{" "}
         </a>
       </header>
       <main id="main" className="container">
         <div className="page-heading">
           <div>
-            <p className="eyebrow">MERCADO / EXPLORADOR</p>
+            <p className="eyebrow">{t("MERCADO / EXPLORADOR")}</p>
             <h1>
-              El mercado,
-              <br />
-              <span>en perspectiva.</span>
+              {t("El mercado,")} <br />
+              <span>{t("en perspectiva.")}</span>
             </h1>
             <p className="intro">
-              Precio y volumen histórico, con el contexto de cada periodo.
+              {t(
+                "Precio y volumen histórico, con el contexto de cada periodo.",
+              )}{" "}
             </p>
           </div>
           <div className="currency-note">
             <span>USD</span>
-            <p>Moneda de referencia</p>
+            <p>{t("Moneda de referencia")}</p>
           </div>
         </div>
-        <section className="controls" aria-label="Dashboard filters">
+        <section className="controls" aria-label={t("Dashboard filters")}>
           <div>
-            <label htmlFor="crypto-select">Cryptocurrency</label>
+            <label htmlFor="crypto-select">{t("Cryptocurrency")}</label>
             <select
               id="crypto-select"
               value={crypto}
@@ -74,13 +86,13 @@ export default function App() {
             >
               {coins.map((c) => (
                 <option key={c.id} value={c.id}>
-                  {c.name}
+                  {t(c.name)}
                 </option>
               ))}
             </select>
           </div>
           <div>
-            <label htmlFor="days-select">Date range</label>
+            <label htmlFor="days-select">{t("Date range")}</label>
             <select
               id="days-select"
               value={days}
@@ -88,18 +100,23 @@ export default function App() {
             >
               {[7, 30, 90].map((d) => (
                 <option key={d} value={d}>
-                  Last {d} days
+                  {t("Last {0} days", [d])}
                 </option>
               ))}
             </select>
           </div>
           <div className="update-note">
             {updatedAt
-              ? `Última consulta: ${new Date(updatedAt).toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" })}`
-              : "Consulta de datos históricos"}
+              ? t("Última consulta: {0}", [
+                  new Date(updatedAt).toLocaleTimeString(locale, {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  }),
+                ])
+              : t("Consulta de datos históricos")}
           </div>
           <button className="refresh" onClick={retry} disabled={loading}>
-            ↻ Actualizar
+            {t("↻ Actualizar")}{" "}
           </button>
         </section>
         <div className="asset-heading">
@@ -108,35 +125,40 @@ export default function App() {
             {coin.name}
             <span>{coin.symbol}</span>
           </h2>
-          <p>{days} días · USD</p>
+          <p>
+            {days} {t("días · USD")}
+          </p>
         </div>
         {loading ? (
           <div className="loading-state" role="status" aria-live="polite">
             <span className="loader" />
-            Loading data…<p>Consultando precio y volumen de {coin.name}.</p>
+            {t("Loading data…")}
+            <p>
+              {t("Consultando precio y volumen de")} {coin.name}.
+            </p>
           </div>
         ) : error ? (
           <div className="empty-state" role="alert">
-            <h3>No pudimos cargar el mercado.</h3>
-            <p>{error}</p>
-            <button onClick={retry}>Reintentar consulta</button>
+            <h3>{t("No pudimos cargar el mercado.")}</h3>
+            <p>{t(error)}</p>
+            <button onClick={retry}>{t("Reintentar consulta")}</button>
           </div>
         ) : !prices.length ? (
           <div className="empty-state">
-            <h3>No hay datos para este periodo.</h3>
-            <p>Selecciona otra moneda o cambia el rango de fechas.</p>
+            <h3>{t("No hay datos para este periodo.")}</h3>
+            <p>{t("Selecciona otra moneda o cambia el rango de fechas.")}</p>
           </div>
         ) : (
           <>
-            <section className="metrics" aria-label="Resumen del periodo">
+            <section className="metrics" aria-label={t("Resumen del periodo")}>
               <div>
-                <p>Último precio disponible</p>
+                <p>{t("Último precio disponible")}</p>
                 <strong>
                   {latest !== undefined ? money.format(latest) : "—"}
                 </strong>
               </div>
               <div>
-                <p>Variación del periodo</p>
+                <p>{t("Variación del periodo")}</p>
                 <strong
                   className={
                     change !== null && change < 0 ? "negative" : "positive"
@@ -148,7 +170,7 @@ export default function App() {
                 </strong>
               </div>
               <div>
-                <p>Último volumen disponible</p>
+                <p>{t("Último volumen disponible")}</p>
                 <strong>
                   {data?.total_volumes.at(-1)
                     ? shortMoney.format(data.total_volumes.at(-1)![1])
@@ -161,16 +183,18 @@ export default function App() {
               <VolumeChart data={data?.total_volumes || []} />
             </div>
             <p className="data-note">
-              {prices.length} observaciones de precio · Último dato:{" "}
-              {new Date(prices.at(-1)![0]).toLocaleString("es-MX")} · Los
-              valores reflejan la cobertura y frecuencia de la fuente.
+              {prices.length} {t("observaciones de precio · Último dato:")}{" "}
+              {new Date(prices.at(-1)![0]).toLocaleString(locale)}
+              {t(
+                "· Los valores reflejan la cobertura y frecuencia de la fuente.",
+              )}{" "}
             </p>
           </>
         )}
         <footer>
-          Crypto Market Dashboard{" "}
+          {t("Crypto Market Dashboard")}{" "}
           <a href="https://www.coingecko.com/" target="_blank" rel="noreferrer">
-            Fuente: CoinGecko ↗
+            {t("Fuente: CoinGecko ↗")}{" "}
           </a>
         </footer>
       </main>

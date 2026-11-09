@@ -11,7 +11,7 @@ describe("VolumeChart", () => {
     render(<VolumeChart data={mockData} />);
 
     expect(
-      screen.getByRole("heading", { name: /trading volume/i }),
+      screen.getByRole("heading", { name: /volumen de operaciones/i }),
     ).toBeInTheDocument();
   });
 });

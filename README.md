@@ -60,3 +60,8 @@ npm test
 El dashboard presenta métricas del periodo, precio y volumen en paneles que ocupan el ancho disponible. Los ejes usan valores abreviados y el detalle conserva valores completos. Los filtros siguen disponibles durante la carga y los errores; se cancelan solicitudes reemplazadas y nunca se muestra una respuesta anterior bajo los filtros nuevos. Se informa el límite de consultas de CoinGecko y se permite reintentar.
 
 Los datos provienen de CoinGecko; se indica la fecha de la observación más reciente y la hora de consulta. Ejecuta `npm run test` para los componentes, `npm run test:api` para validación de datos y errores (Node.js 22 o posterior), `npm run build` y `npm run lint`.
+
+
+## Idiomas
+
+La interfaz admite español e inglés mediante el selector ES / EN. La preferencia se guarda en este navegador y también puede definirse al abrir `?lang=es` o `?lang=en`. Cambiar el idioma conserva los datos de los formularios y los filtros activos. Las etiquetas, validaciones y salidas generadas se adaptan al idioma; los textos libres escritos por el usuario se conservan.

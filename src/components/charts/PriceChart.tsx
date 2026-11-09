@@ -1,3 +1,4 @@
+import { useLanguage } from "../../lib/locale";
 import {
   CartesianGrid,
   LineChart,
@@ -7,34 +8,37 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-const money = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-  maximumFractionDigits: 2,
-});
-const compact = new Intl.NumberFormat("en-US", {
-  notation: "compact",
-  maximumFractionDigits: 1,
-});
 export function PriceChart({ data }: { data: [number, number][] }) {
+  const { t, locale } = useLanguage();
+  const money = new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 2,
+  });
+  const compact = new Intl.NumberFormat(locale, {
+    notation: "compact",
+    maximumFractionDigits: 1,
+  });
+
   const points = data.map(([timestamp, price]) => ({ timestamp, price }));
   return (
     <section className="chart-panel" aria-labelledby="price-title">
       <div className="chart-heading">
         <div>
-          <p className="eyebrow">EVOLUCIÓN / USD</p>
-          <h2 id="price-title">Price over time</h2>
+          <p className="eyebrow">{t("EVOLUCIÓN / USD")}</p>
+          <h2 id="price-title">{t("Price over time")}</h2>
         </div>
         <span className="chart-dot price-dot" />
       </div>
       <p className="sr-only">
-        This chart displays the price evolution of the selected cryptocurrency
-        across the selected time range.
+        {t(
+          "This chart displays the price evolution of the selected cryptocurrency across the selected time range.",
+        )}{" "}
       </p>
       <div
         className="chart-area"
         role="img"
-        aria-label="Line chart showing cryptocurrency price over time"
+        aria-label={t("Line chart showing cryptocurrency price over time")}
       >
         <ResponsiveContainer width="100%" height="100%" minWidth={0}>
           <LineChart
@@ -53,7 +57,7 @@ export function PriceChart({ data }: { data: [number, number][] }) {
               scale="time"
               domain={["dataMin", "dataMax"]}
               tickFormatter={(v) =>
-                new Date(v).toLocaleDateString("es-MX", {
+                new Date(v).toLocaleDateString(locale, {
                   day: "numeric",
                   month: "short",
                 })
@@ -72,10 +76,8 @@ export function PriceChart({ data }: { data: [number, number][] }) {
               domain={["auto", "auto"]}
             />
             <Tooltip
-              labelFormatter={(v) =>
-                new Date(Number(v)).toLocaleString("es-MX")
-              }
-              formatter={(v) => [money.format(Number(v)), "Precio"]}
+              labelFormatter={(v) => new Date(Number(v)).toLocaleString(locale)}
+              formatter={(v) => [money.format(Number(v)), t("Precio")]}
               contentStyle={{
                 borderRadius: 10,
                 border: "1px solid #dce3ef",
