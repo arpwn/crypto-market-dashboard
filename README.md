@@ -54,3 +54,9 @@ npm test
 
 ### Mobile View
 ![Mobile dashboard view](./screenshots/dashboard-mobile.png)
+
+## Exploración de mercado
+
+El dashboard presenta métricas del periodo, precio y volumen en paneles que ocupan el ancho disponible. Los ejes usan valores abreviados y el detalle conserva valores completos. Los filtros siguen disponibles durante la carga y los errores; se cancelan solicitudes reemplazadas y nunca se muestra una respuesta anterior bajo los filtros nuevos. Se informa el límite de consultas de CoinGecko y se permite reintentar.
+
+Los datos provienen de CoinGecko; se indica la fecha de la observación más reciente y la hora de consulta. Ejecuta `npm run test` para los componentes, `npm run test:api` para validación de datos y errores (Node.js 22 o posterior), `npm run build` y `npm run lint`.
